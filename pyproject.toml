@@ -11,5 +11,9 @@ readme = "README.md"
 license = {text = "MIT"}
 
 
+[project.optional-dependencies]
+build = [
+    "pyinstaller>=6.12.0",
+]
 [tool.pdm]
 distribution = false
