@@ -1,19 +1,22 @@
 [project]
 name = "fl_chan"
-version = "0.1.0"
-description = "Default template for PDM package"
+version = "0.1.1"
+description = "A simple FL Chan desktop pet using official material"
 authors = [
-    {name = "NingmengLemon", email = "60469383+NingmengLemon@users.noreply.github.com"},
+    { name = "NingmengLemon", email = "60469383+NingmengLemon@users.noreply.github.com" },
 ]
 dependencies = ["pillow>=11.1.0"]
 requires-python = "==3.12.*"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 
 [project.optional-dependencies]
-build = [
-    "pyinstaller>=6.12.0",
-]
+build = ["pyinstaller>=6.12.0"]
 [tool.pdm]
 distribution = false
+[tool.pdm.scripts]
+build = { cmd = ["pdm", "run", "pyinstaller", "-F", "main.py", "-w"] }
+
+[dependency-groups]
+dev = ["ipykernel>=6.29.5"]
