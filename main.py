@@ -1,5 +1,6 @@
 import functools
 import os
+import sys
 import threading
 import tkinter as tk
 from collections.abc import Callable
@@ -9,6 +10,11 @@ from typing import Literal, TypedDict, cast
 from PIL import Image, ImageColor, ImageTk
 
 from rwlock import ReadWriteLock
+
+if sys.platform == "win32":
+    import ctypes
+
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
 
 def process_image(
@@ -164,7 +170,7 @@ class FLChan:
         new_size = (int(size[0] * self._scale), int(size[1] * self._scale))
 
         self._sequence = [
-            ImageTk.PhotoImage(p.resize(new_size, resample=Image.Resampling.BOX))
+            ImageTk.PhotoImage(p.resize(new_size, resample=Image.Resampling.NEAREST))
             for p in self._resources[self._action]
         ]
         self._size = new_size
@@ -206,6 +212,7 @@ class FLChan:
     @__with_lock("write")
     def show(self):
         self._root = r = tk.Tk()
+        # dpi = r.winfo_fpixels("1i")
         self._label = ImageLabel(self._root, bg=self._color_as_transp)
         self._label.pack()
         r.geometry(
