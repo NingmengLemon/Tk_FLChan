@@ -1,5 +1,24 @@
 import threading
-from typing import Literal
+import tkinter as tk
+from typing import Literal, cast
+
+from PIL import ImageTk
+
+
+class ImageLabel(tk.Label):
+    def update_pic(self, new_pic: ImageTk.PhotoImage):
+        self.configure(image=new_pic)
+        self.image = new_pic
+
+    @property
+    def width(self) -> int:
+        image = getattr(self, "image", None)
+        return 0 if image is None else cast(ImageTk.PhotoImage, image).width()
+
+    @property
+    def height(self) -> int:
+        image = getattr(self, "image", None)
+        return 0 if image is None else cast(ImageTk.PhotoImage, image).height()
 
 
 class ReadWriteLock:

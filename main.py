@@ -9,7 +9,7 @@ from typing import Literal, TypedDict, cast
 
 from PIL import Image, ImageColor, ImageTk
 
-from rwlock import ReadWriteLock
+from utils import ImageLabel, ReadWriteLock
 
 if sys.platform == "win32":
     import ctypes
@@ -48,37 +48,6 @@ def load_profile(
             row.append(clip)
         data[a] = row
     return data
-
-
-def load_whole_dir(dir: str = "artworks"):
-    sprites: dict[str, dict[str, list[ImageTk.PhotoImage]]] = {}
-    for conf_filename in os.listdir(dir):
-        conf_name, ext = os.path.splitext(conf_filename)
-        if ext.lower() != ".txt":
-            continue
-        conf_path = os.path.join(dir, conf_filename)
-        sprites_path = os.path.join(dir, conf_name + ".png")
-        if not os.path.exists(sprites_path):
-            print(f"跳过 <{conf_name}> 因为找不到对应的图像文件")
-            continue
-        sprites[os.path.splitext(conf_name)[0]] = load_profile(conf_path, sprites_path)
-    return sprites
-
-
-class ImageLabel(tk.Label):
-    def update_pic(self, new_pic: ImageTk.PhotoImage):
-        self.configure(image=new_pic)
-        self.image = new_pic
-
-    @property
-    def width(self) -> int:
-        image = getattr(self, "image", None)
-        return 0 if image is None else cast(ImageTk.PhotoImage, image).width()
-
-    @property
-    def height(self) -> int:
-        image = getattr(self, "image", None)
-        return 0 if image is None else cast(ImageTk.PhotoImage, image).height()
 
 
 class FLChan:
@@ -183,7 +152,7 @@ class FLChan:
         scale: float | None = None,
         interval: int | None = None,
     ):
-        if interval is not None:
+        if interval is not None and interval > 0:
             with self._rwlock.read_lock():
                 self._interval = int(interval)
         if action is None or action not in self._resources.keys():
